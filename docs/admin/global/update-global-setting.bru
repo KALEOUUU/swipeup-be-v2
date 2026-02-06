@@ -1,0 +1,22 @@
+meta {
+  name: "Update Global Setting"
+  type: http
+  seq: 12
+}
+
+put {
+  url: {{BASE_URL}}/api/v1/admin/global-settings/discount_rate
+  body: json
+  auth: bearer
+}
+
+headers {
+  Content-Type: "application/json"
+  Authorization: "Bearer {{ADMIN_TOKEN}}"
+}
+
+body:json {
+  {
+    "value": "10"
+  }
+}

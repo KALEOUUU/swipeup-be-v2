@@ -1,0 +1,21 @@
+meta {
+  name: "Get Orders"
+  type: http
+  seq: 7
+}
+
+get {
+  url: {{BASE_URL}}/api/v1/stand/orders
+  body: none
+  auth: bearer
+}
+
+headers {
+  Content-Type: "application/json"
+  Authorization: "Bearer {{STAND_TOKEN}}"
+}
+
+auth:basic {
+  username: ""
+  password: ""
+}

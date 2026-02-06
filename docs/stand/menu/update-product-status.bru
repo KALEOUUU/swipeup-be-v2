@@ -1,0 +1,22 @@
+meta {
+  name: "Update Product Status"
+  type: http
+  seq: 6
+}
+
+put {
+  url: {{BASE_URL}}/api/v1/stand/products/1/status
+  body: json
+  auth: bearer
+}
+
+headers {
+  Content-Type: "application/json"
+  Authorization: "Bearer {{STAND_TOKEN}}"
+}
+
+body:json {
+  {
+    "status": "cooking"
+  }
+}

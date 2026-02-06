@@ -1,0 +1,31 @@
+meta {
+  name: "Register"
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{BASE_URL}}/api/v1/auth/register
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: "application/json"
+}
+
+body:json {
+  {
+    "username": "new_student",
+    "password": "password123",
+    "role": "student",
+    "name": "John Doe",
+    "email": "john@example.com",
+    "phone": "08123456789",
+    "rfid_card": "RFID123456"
+  }
+}
+
+vars:pre-request {
+  BASE_URL: http://localhost:8080
+}

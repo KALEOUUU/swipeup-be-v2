@@ -1,0 +1,21 @@
+meta {
+  name: "Get Transactions"
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{BASE_URL}}/api/v1/siswa/transactions
+  body: none
+  auth: bearer
+}
+
+headers {
+  Content-Type: "application/json"
+  Authorization: "Bearer {{STUDENT_TOKEN}}"
+}
+
+auth:basic {
+  username: ""
+  password: ""
+}

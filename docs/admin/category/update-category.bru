@@ -1,0 +1,22 @@
+meta {
+  name: "Update Category"
+  type: http
+  seq: 9
+}
+
+put {
+  url: {{BASE_URL}}/api/v1/admin/categories/1
+  body: json
+  auth: bearer
+}
+
+headers {
+  Content-Type: "application/json"
+  Authorization: "Bearer {{ADMIN_TOKEN}}"
+}
+
+body:json {
+  {
+    "name": "Hot Beverages"
+  }
+}

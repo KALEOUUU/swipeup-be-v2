@@ -1,0 +1,28 @@
+meta {
+  name: "Update Product"
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{BASE_URL}}/api/v1/stand/products/1
+  body: json
+  auth: bearer
+}
+
+headers {
+  Content-Type: "application/json"
+  Authorization: "Bearer {{STAND_TOKEN}}"
+}
+
+body:json {
+  {
+    "name": "Nasi Goreng Spesial",
+    "description": "Fried rice with egg, chicken, and vegetables",
+    "price": 18000,
+    "category_id": 1,
+    "image_base64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==",
+    "qris_base64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==",
+    "discount": 15
+  }
+}

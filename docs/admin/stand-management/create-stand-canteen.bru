@@ -1,0 +1,32 @@
+meta {
+  name: "Create Stand Canteen"
+  type: http
+  seq: 15
+}
+
+post {
+  url: {{BASE_URL}}/api/v1/admin/stand-canteens
+  body: json
+  auth: bearer
+}
+
+headers {
+  Content-Type: "application/json"
+  Authorization: "Bearer {{ADMIN_TOKEN}}"
+}
+
+auth:bearer {
+  token: token_20260206221626
+}
+
+body:json {
+  {
+    "user_id": 5,
+    "store_name": "Kantin Pak Yoyok",
+    "qris_base64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg=="
+  }
+}
+
+vars:pre-request {
+  BASE_URL: http://localhost:8080
+}

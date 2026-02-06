@@ -1,0 +1,33 @@
+meta {
+  name: "Create Order"
+  type: http
+  seq: 10
+}
+
+post {
+  url: {{BASE_URL}}/api/v1/stand/orders
+  body: json
+  auth: bearer
+}
+
+headers {
+  Content-Type: "application/json"
+  Authorization: "Bearer {{STAND_TOKEN}}"
+}
+
+body:json {
+  {
+    "user_id": 1,
+    "items": [
+      {
+        "product_id": 1,
+        "quantity": 2
+      },
+      {
+        "product_id": 2,
+        "quantity": 1
+      }
+    ],
+    "payment_method": "card"
+  }
+}

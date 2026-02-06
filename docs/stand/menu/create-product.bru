@@ -1,0 +1,28 @@
+meta {
+  name: "Create Product"
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{BASE_URL}}/api/v1/stand/products
+  body: json
+  auth: bearer
+}
+
+headers {
+  Content-Type: "application/json"
+  Authorization: "Bearer {{STAND_TOKEN}}"
+}
+
+body:json {
+  {
+    "name": "Nasi Goreng",
+    "description": "Fried rice with egg and vegetables",
+    "price": 15000,
+    "category_id": 1,
+    "image_base64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==",
+    "qris_base64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==",
+    "discount": 10
+  }
+}

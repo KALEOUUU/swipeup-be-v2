@@ -1,0 +1,22 @@
+meta {
+  name: "Top Up Balance"
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{BASE_URL}}/api/v1/admin/users/1/topup
+  body: json
+  auth: bearer
+}
+
+headers {
+  Content-Type: "application/json"
+  Authorization: "Bearer {{ADMIN_TOKEN}}"
+}
+
+body:json {
+  {
+    "amount": 50000
+  }
+}

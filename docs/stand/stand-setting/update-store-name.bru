@@ -1,0 +1,22 @@
+meta {
+  name: "Update Store Name"
+  type: http
+  seq: 15
+}
+
+put {
+  url: {{BASE_URL}}/api/v1/stand/settings/store-name
+  body: json
+  auth: bearer
+}
+
+headers {
+  Content-Type: "application/json"
+  Authorization: "Bearer {{STAND_TOKEN}}"
+}
+
+body:json {
+  {
+    "store_name": "Kantin Sejahtera Baru"
+  }
+}

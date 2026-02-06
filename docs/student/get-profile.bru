@@ -1,0 +1,21 @@
+meta {
+  name: "Get Profile"
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{BASE_URL}}/api/v1/siswa/profile
+  body: none
+  auth: bearer
+}
+
+headers {
+  Content-Type: "application/json"
+  Authorization: "Bearer {{STUDENT_TOKEN}}"
+}
+
+auth:basic {
+  username: ""
+  password: ""
+}

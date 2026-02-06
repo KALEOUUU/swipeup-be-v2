@@ -1,0 +1,25 @@
+meta {
+  name: "Update User"
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{BASE_URL}}/api/v1/admin/users/1
+  body: json
+  auth: bearer
+}
+
+headers {
+  Content-Type: "application/json"
+  Authorization: "Bearer {{ADMIN_TOKEN}}"
+}
+
+body:json {
+  {
+    "name": "John Doe Updated",
+    "email": "john.updated@example.com",
+    "phone": "08198765432",
+    "rfid_card": "RFID654321"
+  }
+}

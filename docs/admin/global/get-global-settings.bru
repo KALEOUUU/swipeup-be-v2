@@ -1,0 +1,21 @@
+meta {
+  name: "Get Global Settings"
+  type: http
+  seq: 11
+}
+
+get {
+  url: {{BASE_URL}}/api/v1/admin/global-settings
+  body: none
+  auth: bearer
+}
+
+headers {
+  Content-Type: "application/json"
+  Authorization: "Bearer {{ADMIN_TOKEN}}"
+}
+
+auth:basic {
+  username: ""
+  password: ""
+}

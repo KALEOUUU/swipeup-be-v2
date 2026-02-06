@@ -1,0 +1,21 @@
+meta {
+  name: "Get Products"
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{BASE_URL}}/api/v1/stand/products
+  body: none
+  auth: bearer
+}
+
+headers {
+  Content-Type: "application/json"
+  Authorization: "Bearer {{STAND_TOKEN}}"
+}
+
+auth:basic {
+  username: ""
+  password: ""
+}

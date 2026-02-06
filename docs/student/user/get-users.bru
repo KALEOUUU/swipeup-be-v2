@@ -1,0 +1,30 @@
+meta {
+  name: "Get Users"
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{BASE_URL}}/api/v1/admin/users
+  body: none
+  auth: bearer
+}
+
+headers {
+  Content-Type: "application/json"
+  Authorization: "Bearer {{ADMIN_TOKEN}}"
+}
+
+auth:basic {
+  username: ""
+  password: ""
+}
+
+auth:bearer {
+  token: token_20260206230009
+}
+
+vars:pre-request {
+  BASE_URL: http://localhost:8080
+  ADMIN_TOKEN: token_20260206230009
+}

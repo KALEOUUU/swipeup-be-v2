@@ -1,0 +1,21 @@
+meta {
+  name: "Get Orders"
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{BASE_URL}}/api/v1/siswa/orders
+  body: none
+  auth: bearer
+}
+
+headers {
+  Content-Type: "application/json"
+  Authorization: "Bearer {{STUDENT_TOKEN}}"
+}
+
+auth:basic {
+  username: ""
+  password: ""
+}

@@ -1,0 +1,21 @@
+meta {
+  name: "Get Order by ID"
+  type: http
+  seq: 9
+}
+
+get {
+  url: {{BASE_URL}}/api/v1/stand/orders/1
+  body: none
+  auth: bearer
+}
+
+headers {
+  Content-Type: "application/json"
+  Authorization: "Bearer {{STAND_TOKEN}}"
+}
+
+auth:basic {
+  username: ""
+  password: ""
+}

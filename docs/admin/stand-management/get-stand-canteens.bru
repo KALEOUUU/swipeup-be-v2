@@ -1,0 +1,25 @@
+meta {
+  name: "Get Stand Canteens"
+  type: http
+  seq: 13
+}
+
+get {
+  url: {{BASE_URL}}/api/v1/admin/stand-canteens
+  body: none
+  auth: bearer
+}
+
+headers {
+  Content-Type: "application/json"
+  Authorization: "Bearer {{ADMIN_TOKEN}}"
+}
+
+auth:basic {
+  username: ""
+  password: ""
+}
+
+vars:pre-request {
+  BASE_URL: http://localhost:8080
+}

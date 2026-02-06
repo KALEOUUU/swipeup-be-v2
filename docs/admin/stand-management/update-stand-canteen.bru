@@ -1,0 +1,23 @@
+meta {
+  name: "Update Stand Canteen"
+  type: http
+  seq: 16
+}
+
+put {
+  url: {{BASE_URL}}/api/v1/admin/stand-canteens/1
+  body: json
+  auth: bearer
+}
+
+headers {
+  Content-Type: "application/json"
+  Authorization: "Bearer {{ADMIN_TOKEN}}"
+}
+
+body:json {
+  {
+    "store_name": "Kantin Makanan Baru",
+    "qris_base64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg=="
+  }
+}

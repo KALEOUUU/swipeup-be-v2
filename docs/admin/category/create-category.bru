@@ -1,0 +1,22 @@
+meta {
+  name: "Create Category"
+  type: http
+  seq: 8
+}
+
+post {
+  url: {{BASE_URL}}/api/v1/admin/categories
+  body: json
+  auth: bearer
+}
+
+headers {
+  Content-Type: "application/json"
+  Authorization: "Bearer {{ADMIN_TOKEN}}"
+}
+
+body:json {
+  {
+    "name": "Beverages"
+  }
+}

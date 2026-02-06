@@ -1,0 +1,24 @@
+meta {
+  name: "Update Settings"
+  type: http
+  seq: 13
+}
+
+put {
+  url: {{BASE_URL}}/api/v1/stand/settings
+  body: json
+  auth: bearer
+}
+
+headers {
+  Content-Type: "application/json"
+  Authorization: "Bearer {{STAND_TOKEN}}"
+}
+
+body:json {
+  {
+    "store_name": "Kantin Sejahtera",
+    "qris_base64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==",
+    "is_active": true
+  }
+}
