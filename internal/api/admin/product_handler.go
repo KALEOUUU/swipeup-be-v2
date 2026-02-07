@@ -32,6 +32,24 @@ func (h *ProductHandler) CreateStandCanteen(c *gin.Context) {
 		return
 	}
 
+	// Check if user exists and has stand_admin role
+	var user models.User
+	if err := h.db.First(&user, req.StandID).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "User not found"})
+		return
+	}
+	if user.Role != "stand_admin" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "User must have stand_admin role"})
+		return
+	}
+
+	// Check if stand settings already exist for this user
+	var existing models.StandSettings
+	if err := h.db.Where("stand_id = ?", req.StandID).First(&existing).Error; err == nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Stand canteen already exists for this user"})
+		return
+	}
+
 	// Create stand canteen settings
 	settings := models.StandSettings{
 		StandID:   req.StandID,
@@ -41,7 +59,7 @@ func (h *ProductHandler) CreateStandCanteen(c *gin.Context) {
 	}
 
 	if err := h.db.Create(&settings).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create stand canteen"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create stand canteen: " + err.Error()})
 		return
 	}
 

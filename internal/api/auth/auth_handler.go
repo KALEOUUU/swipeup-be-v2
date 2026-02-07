@@ -43,8 +43,8 @@ func (h *AuthHandler) Login(c *gin.Context) {
 	}
 
 	var user models.User
-	// Check if user exists by student_id, name, or email
-	if err := h.db.Where("(student_id = ? OR name = ? OR email = ?) AND is_active = ?", req.Username, req.Username, req.Username, true).First(&user).Error; err != nil {
+	// Check if user exists by name or email
+	if err := h.db.Where("(name = ? OR email = ?) AND is_active = ?", req.Username, req.Username, true).First(&user).Error; err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
 		return
 	}

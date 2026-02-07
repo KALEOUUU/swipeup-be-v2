@@ -84,15 +84,21 @@ func seedUsers(db *gorm.DB) error {
 		var existingUser models.User
 		result := db.Where("email = ?", userData.Email).First(&existingUser)
 		
-		if result.Error == nil {
-			log.Printf("  ⏭️  User %s (%s) already exists, skipping", userData.Name, userData.Email)
-			continue
-		}
-
 		// Hash the password
 		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(userData.Password), bcrypt.DefaultCost)
 		if err != nil {
 			log.Printf("  ❌ Failed to hash password for %s: %v", userData.Name, err)
+			continue
+		}
+
+		if result.Error == nil {
+			// User exists - update password to ensure it's hashed correctly
+			existingUser.Password = string(hashedPassword)
+			if err := db.Save(&existingUser).Error; err != nil {
+				log.Printf("  ❌ Failed to update password for %s: %v", userData.Name, err)
+				continue
+			}
+			log.Printf("  🔄 Updated password for existing user: %s (%s)", userData.Name, userData.Email)
 			continue
 		}
 

@@ -20,6 +20,34 @@ func NewUserHandler(db *gorm.DB) *UserHandler {
 	return &UserHandler{db: db}
 }
 
+// CreateUserRequest represents the request payload for creating a user
+type CreateUserRequest struct {
+	Name      string  `json:"name" binding:"required"`
+	Email     string  `json:"email" binding:"required"`
+	Phone     string  `json:"phone"`
+	Role      string  `json:"role"`
+	Class     string  `json:"class"`
+	Balance   float64 `json:"balance"`
+	IsActive  bool    `json:"is_active"`
+	RFIDCard  string  `json:"rfid_card"`
+	StudentId string  `json:"student_id"`
+	Password  string  `json:"password" binding:"required"`
+}
+
+// UpdateUserRequest represents the request payload for updating a user
+type UpdateUserRequest struct {
+	Name      string  `json:"name"`
+	Email     string  `json:"email"`
+	Phone     string  `json:"phone"`
+	Role      string  `json:"role"`
+	Class     string  `json:"class"`
+	Balance   float64 `json:"balance"`
+	IsActive  bool    `json:"is_active"`
+	RFIDCard  string  `json:"rfid_card"`
+	StudentId string  `json:"student_id"`
+	Password  string  `json:"password"` // Optional for update
+}
+
 // GetUsers returns all users
 func (h *UserHandler) GetUsers(c *gin.Context) {
 	var users []models.User
@@ -43,20 +71,38 @@ func (h *UserHandler) GetUser(c *gin.Context) {
 
 // CreateUser creates a new user
 func (h *UserHandler) CreateUser(c *gin.Context) {
-	var user models.User
-	if err := c.ShouldBindJSON(&user); err != nil {
+	var req CreateUserRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	// Hash the password if provided
-	if user.Password != "" {
-		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
-			return
-		}
-		user.Password = string(hashedPassword)
+	// Check if email already exists
+	var existingUser models.User
+	if err := h.db.Where("email = ?", req.Email).First(&existingUser).Error; err == nil {
+		c.JSON(http.StatusConflict, gin.H{"error": "Email already exists"})
+		return
+	}
+
+	// Hash the password
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
+		return
+	}
+
+	// Create user model
+	user := models.User{
+		Name:      req.Name,
+		Email:     req.Email,
+		Phone:     req.Phone,
+		Role:      req.Role,
+		Class:     req.Class,
+		Balance:   req.Balance,
+		IsActive:  true,
+		RFIDCard:  req.RFIDCard,
+		StudentId: req.StudentId,
+		Password:  string(hashedPassword),
 	}
 
 	if err := h.db.Create(&user).Error; err != nil {
@@ -70,23 +116,45 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 // UpdateUser updates an existing user
 func (h *UserHandler) UpdateUser(c *gin.Context) {
 	id := c.Param("id")
-	var user models.User
-	if err := h.db.First(&user, id).Error; err != nil {
+	var existingUser models.User
+	if err := h.db.First(&existingUser, id).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 		return
 	}
 
-	if err := c.ShouldBindJSON(&user); err != nil {
+	var req UpdateUserRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	if err := h.db.Save(&user).Error; err != nil {
+	// If password is provided, hash it; otherwise keep existing password
+	if req.Password != "" {
+		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
+			return
+		}
+		existingUser.Password = string(hashedPassword)
+	}
+
+	// Update other fields
+	existingUser.Name = req.Name
+	existingUser.Email = req.Email
+	existingUser.Phone = req.Phone
+	existingUser.Role = req.Role
+	existingUser.Class = req.Class
+	existingUser.Balance = req.Balance
+	existingUser.IsActive = req.IsActive
+	existingUser.RFIDCard = req.RFIDCard
+	existingUser.StudentId = req.StudentId
+
+	if err := h.db.Save(&existingUser).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update user"})
 		return
 	}
 
-	c.JSON(http.StatusOK, user)
+	c.JSON(http.StatusOK, existingUser)
 }
 
 // DeleteUser deletes a user by ID
