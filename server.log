@@ -1,0 +1,65 @@
+2026/02/07 23:45:54 Database connected successfully
+[GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
+
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:	export GIN_MODE=release
+ - using code:	gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] GET    /api/v1/health            --> swipeup-admin-v2/internal/routes.SetupRoutes.func1 (4 handlers)
+[GIN-debug] POST   /api/v1/auth/login        --> swipeup-admin-v2/internal/api/auth.(*AuthHandler).Login-fm (4 handlers)
+[GIN-debug] POST   /api/v1/auth/logout       --> swipeup-admin-v2/internal/api/auth.(*AuthHandler).Logout-fm (4 handlers)
+[GIN-debug] POST   /api/v1/auth/refresh      --> swipeup-admin-v2/internal/api/auth.(*AuthHandler).RefreshToken-fm (4 handlers)
+[GIN-debug] POST   /api/v1/auth/register     --> swipeup-admin-v2/internal/api/admin.(*UserHandler).CreateUser-fm (4 handlers)
+[GIN-debug] GET    /api/v1/siswa/profile     --> swipeup-admin-v2/internal/api/siswa.(*UserHandler).GetProfile-fm (5 handlers)
+[GIN-debug] GET    /api/v1/siswa/balance     --> swipeup-admin-v2/internal/api/siswa.(*UserHandler).GetBalance-fm (5 handlers)
+[GIN-debug] GET    /api/v1/siswa/orders      --> swipeup-admin-v2/internal/api/siswa.(*UserHandler).GetOrders-fm (5 handlers)
+[GIN-debug] GET    /api/v1/siswa/transactions --> swipeup-admin-v2/internal/api/siswa.(*UserHandler).GetTransactions-fm (5 handlers)
+[GIN-debug] GET    /api/v1/stand/products    --> swipeup-admin-v2/internal/api/stand.(*ProductHandler).GetProducts-fm (6 handlers)
+[GIN-debug] GET    /api/v1/stand/products/:id --> swipeup-admin-v2/internal/api/stand.(*ProductHandler).GetProduct-fm (6 handlers)
+[GIN-debug] POST   /api/v1/stand/products    --> swipeup-admin-v2/internal/api/stand.(*ProductHandler).CreateProduct-fm (6 handlers)
+[GIN-debug] PUT    /api/v1/stand/products/:id --> swipeup-admin-v2/internal/api/stand.(*ProductHandler).UpdateProduct-fm (6 handlers)
+[GIN-debug] DELETE /api/v1/stand/products/:id --> swipeup-admin-v2/internal/api/stand.(*ProductHandler).DeleteProduct-fm (6 handlers)
+[GIN-debug] PUT    /api/v1/stand/products/:id/status --> swipeup-admin-v2/internal/api/stand.(*ProductHandler).UpdateProductStatus-fm (6 handlers)
+[GIN-debug] GET    /api/v1/stand/orders      --> swipeup-admin-v2/internal/api/stand.(*OrderHandler).GetOrders-fm (6 handlers)
+[GIN-debug] GET    /api/v1/stand/orders/pending --> swipeup-admin-v2/internal/api/stand.(*OrderHandler).GetPendingOrders-fm (6 handlers)
+[GIN-debug] GET    /api/v1/stand/orders/:id  --> swipeup-admin-v2/internal/api/stand.(*OrderHandler).GetOrder-fm (6 handlers)
+[GIN-debug] POST   /api/v1/stand/orders      --> swipeup-admin-v2/internal/api/stand.(*OrderHandler).CreateOrder-fm (6 handlers)
+[GIN-debug] PUT    /api/v1/stand/orders/:id/status --> swipeup-admin-v2/internal/api/stand.(*OrderHandler).UpdateOrderStatus-fm (6 handlers)
+[GIN-debug] GET    /api/v1/stand/settings    --> swipeup-admin-v2/internal/api/stand.(*SettingsHandler).GetSettings-fm (6 handlers)
+[GIN-debug] PUT    /api/v1/stand/settings    --> swipeup-admin-v2/internal/api/stand.(*SettingsHandler).UpdateSettings-fm (6 handlers)
+[GIN-debug] PUT    /api/v1/stand/settings/qris --> swipeup-admin-v2/internal/api/stand.(*SettingsHandler).UpdateQRIS-fm (6 handlers)
+[GIN-debug] PUT    /api/v1/stand/settings/store-name --> swipeup-admin-v2/internal/api/stand.(*SettingsHandler).UpdateStoreName-fm (6 handlers)
+[GIN-debug] GET    /api/v1/admin/users       --> swipeup-admin-v2/internal/api/admin.(*UserHandler).GetUsers-fm (6 handlers)
+[GIN-debug] GET    /api/v1/admin/users/:id   --> swipeup-admin-v2/internal/api/admin.(*UserHandler).GetUser-fm (6 handlers)
+[GIN-debug] POST   /api/v1/admin/users       --> swipeup-admin-v2/internal/api/admin.(*UserHandler).CreateUser-fm (6 handlers)
+[GIN-debug] PUT    /api/v1/admin/users/:id   --> swipeup-admin-v2/internal/api/admin.(*UserHandler).UpdateUser-fm (6 handlers)
+[GIN-debug] DELETE /api/v1/admin/users/:id   --> swipeup-admin-v2/internal/api/admin.(*UserHandler).DeleteUser-fm (6 handlers)
+[GIN-debug] POST   /api/v1/admin/users/:id/topup --> swipeup-admin-v2/internal/api/admin.(*UserHandler).TopUpBalance-fm (6 handlers)
+[GIN-debug] GET    /api/v1/admin/categories  --> swipeup-admin-v2/internal/api/admin.(*CategoryHandler).GetCategories-fm (6 handlers)
+[GIN-debug] GET    /api/v1/admin/categories/:id --> swipeup-admin-v2/internal/api/admin.(*CategoryHandler).GetCategory-fm (6 handlers)
+[GIN-debug] POST   /api/v1/admin/categories  --> swipeup-admin-v2/internal/api/admin.(*CategoryHandler).CreateCategory-fm (6 handlers)
+[GIN-debug] PUT    /api/v1/admin/categories/:id --> swipeup-admin-v2/internal/api/admin.(*CategoryHandler).UpdateCategory-fm (6 handlers)
+[GIN-debug] DELETE /api/v1/admin/categories/:id --> swipeup-admin-v2/internal/api/admin.(*CategoryHandler).DeleteCategory-fm (6 handlers)
+[GIN-debug] GET    /api/v1/admin/stand-canteens --> swipeup-admin-v2/internal/api/admin.(*ProductHandler).GetStandCanteens-fm (6 handlers)
+[GIN-debug] GET    /api/v1/admin/stand-canteens/:id --> swipeup-admin-v2/internal/api/admin.(*ProductHandler).GetStandCanteen-fm (6 handlers)
+[GIN-debug] POST   /api/v1/admin/stand-canteens --> swipeup-admin-v2/internal/api/admin.(*ProductHandler).CreateStandCanteen-fm (6 handlers)
+[GIN-debug] PUT    /api/v1/admin/stand-canteens/:id --> swipeup-admin-v2/internal/api/admin.(*ProductHandler).UpdateStandCanteen-fm (6 handlers)
+[GIN-debug] DELETE /api/v1/admin/stand-canteens/:id --> swipeup-admin-v2/internal/api/admin.(*ProductHandler).DeleteStandCanteen-fm (6 handlers)
+[GIN-debug] GET    /api/v1/admin/global-settings --> swipeup-admin-v2/internal/api/admin.(*CategoryHandler).GetGlobalSettings-fm (6 handlers)
+[GIN-debug] PUT    /api/v1/admin/global-settings/:key --> swipeup-admin-v2/internal/api/admin.(*CategoryHandler).UpdateGlobalSetting-fm (6 handlers)
+2026/02/07 23:45:54 Server starting on port 8080...
+[GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
+Please check https://github.com/gin-gonic/gin/blob/master/docs/doc.md#dont-trust-all-proxies for details.
+[GIN-debug] Listening and serving HTTP on :8080
+[GIN] 2026/02/07 - 23:46:02 | 200 |    1.458583ms |             ::1 | GET      "/api/v1/health"
+
+2026/02/07 23:46:07 [32m/Users/kaleee/last-school-project/swipeup-admin-v2/internal/api/auth/auth_handler.go:47
+[0m[33m[23.171ms] [34;1m[rows:1][0m SELECT * FROM `users` WHERE ((name = 'Administrator' OR email = 'Administrator') AND is_active = true) AND `users`.`deleted_at` IS NULL ORDER BY `users`.`id` LIMIT 1
+[GIN] 2026/02/07 - 23:46:07 | 200 |   76.316375ms |             ::1 | POST     "/api/v1/auth/login"
+
+2026/02/07 23:46:07 [32m/Users/kaleee/last-school-project/swipeup-admin-v2/internal/api/admin/category_handler.go:113
+[0m[33m[5.648ms] [34;1m[rows:1][0m SELECT * FROM `global_settings` WHERE `key` = 'discount_rate' AND `global_settings`.`deleted_at` IS NULL ORDER BY `global_settings`.`id` LIMIT 1
+
+2026/02/07 23:46:07 [32m/Users/kaleee/last-school-project/swipeup-admin-v2/internal/api/admin/category_handler.go:128
+[0m[33m[5.900ms] [34;1m[rows:1][0m UPDATE `global_settings` SET `created_at`='2026-02-06 19:13:47.748',`updated_at`='2026-02-07 23:46:07.42',`deleted_at`=NULL,`key`='discount_rate',`value`='10',`is_active`=true WHERE `global_settings`.`deleted_at` IS NULL AND `id` = 1
+[GIN] 2026/02/07 - 23:46:07 | 200 |   11.767958ms |             ::1 | PUT      "/api/v1/admin/global-settings/discount_rate"

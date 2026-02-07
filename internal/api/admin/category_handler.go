@@ -99,8 +99,8 @@ func (h *CategoryHandler) GetGlobalSettings(c *gin.Context) {
 
 // UpdateGlobalSetting updates a global setting
 func (h *CategoryHandler) UpdateGlobalSetting(c *gin.Context) {
+	key := c.Param("key")
 	var req struct {
-		Key   string `json:"key" binding:"required"`
 		Value string `json:"value" binding:"required"`
 	}
 
@@ -110,10 +110,10 @@ func (h *CategoryHandler) UpdateGlobalSetting(c *gin.Context) {
 	}
 
 	var setting models.GlobalSettings
-	if err := h.db.Where("key = ?", req.Key).First(&setting).Error; err != nil {
+	if err := h.db.Where("`key` = ?", key).First(&setting).Error; err != nil {
 		// Create new setting if not found
 		setting = models.GlobalSettings{
-			Key:      req.Key,
+			Key:      key,
 			Value:     req.Value,
 			IsActive:  true,
 		}

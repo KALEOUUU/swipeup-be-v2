@@ -17,7 +17,7 @@ type StandSettings struct {
 	StandID   uint   `json:"stand_id" gorm:"not null;uniqueIndex"`
 	Stand     User   `json:"stand" gorm:"foreignKey:StandID"`
 	StoreName  string `json:"store_name" gorm:"not null;size:100"` // Canteen stand/store name
-	QRIS       string `json:"qris" gorm:"size:255"` // QRIS code for payment
+	QRIS       string `json:"qris" gorm:"type:text"` // QRIS base64 encoded image for payment
 	IsActive   bool   `json:"is_active" gorm:"default:true"`
 }
 

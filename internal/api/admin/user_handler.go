@@ -25,7 +25,7 @@ type CreateUserRequest struct {
 	Name      string  `json:"name" binding:"required"`
 	Email     string  `json:"email" binding:"required"`
 	Phone     string  `json:"phone"`
-	Role      string  `json:"role"`
+	Role      string  `json:"role" binding:"required,oneof=student admin stand_admin"`
 	Class     string  `json:"class"`
 	Balance   float64 `json:"balance"`
 	IsActive  bool    `json:"is_active"`
@@ -39,7 +39,7 @@ type UpdateUserRequest struct {
 	Name      string  `json:"name"`
 	Email     string  `json:"email"`
 	Phone     string  `json:"phone"`
-	Role      string  `json:"role"`
+	Role      string  `json:"role" binding:"omitempty,oneof=student admin stand_admin"`
 	Class     string  `json:"class"`
 	Balance   float64 `json:"balance"`
 	IsActive  bool    `json:"is_active"`
@@ -55,6 +55,17 @@ func (h *UserHandler) GetUsers(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch users"})
 		return
 	}
+
+	// Validate that all users have valid roles
+	for i := range users {
+		if users[i].Role == "" {
+			// Set default role for users with empty role
+			users[i].Role = "student"
+			// Update in database
+			h.db.Model(&users[i]).Update("role", "student")
+		}
+	}
+
 	c.JSON(http.StatusOK, users)
 }
 
@@ -66,6 +77,13 @@ func (h *UserHandler) GetUser(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 		return
 	}
+
+	// Fix empty role if found
+	if user.Role == "" {
+		user.Role = "student"
+		h.db.Model(&user).Update("role", "student")
+	}
+
 	c.JSON(http.StatusOK, user)
 }
 
@@ -96,7 +114,7 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 		Name:      req.Name,
 		Email:     req.Email,
 		Phone:     req.Phone,
-		Role:      req.Role,
+		Role:      req.Role, // Role is now validated and required
 		Class:     req.Class,
 		Balance:   req.Balance,
 		IsActive:  true,
