@@ -1,0 +1,80 @@
+meta {
+  name: "Get Monthly Revenue Recap"
+  type: http
+  seq: 9
+}
+
+get {
+  url: {{BASE_URL}}/api/v1/stand/orders/revenue/monthly?year=2024
+  body: none
+  auth: bearer
+}
+
+headers {
+  Content-Type: "application/json"
+  Authorization: "Bearer {{STAND_TOKEN}}"
+}
+
+auth:basic {
+  username: ""
+  password: ""
+}
+
+vars:pre-request {
+  BASE_URL: http://localhost:8080
+}
+
+docs {
+  # Get Monthly Revenue Recap
+  #
+  # This endpoint provides a comprehensive annual revenue analysis for the authenticated stand.
+  # It shows monthly breakdown of orders and revenue for the entire year, along with yearly totals.
+  #
+  # Query Parameters:
+  # - year (optional): The year to analyze (defaults to current year if not provided)
+  #
+  # Response includes:
+  # - year: The year being analyzed
+  # - monthly_data: Array of 12 months with order and revenue statistics
+  # - yearly_summary: Total statistics for the entire year
+  #
+  # Each month in monthly_data contains:
+  # - month: Month number (1-12)
+  # - month_name: Full month name (e.g., "January", "February")
+  # - total_orders: Total number of orders for the month
+  # - completed_orders: Number of completed orders
+  # - total_revenue: Total revenue for the month
+  #
+  # Example Response:
+  # {
+  #   "year": "2024",
+  #   "monthly_data": [
+  #     {
+  #       "month": 1,
+  #       "month_name": "January",
+  #       "total_orders": 45,
+  #       "completed_orders": 42,
+  #       "total_revenue": 1058400
+  #     },
+  #     {
+  #       "month": 2,
+  #       "month_name": "February",
+  #       "total_orders": 38,
+  #       "completed_orders": 35,
+  #       "total_revenue": 893760
+  #     },
+  #     // ... months 3-12 with similar structure
+  #   ],
+  #   "yearly_summary": {
+  #     "total_orders": 520,
+  #     "completed_orders": 485,
+  #     "total_revenue": 12241600
+  #   }
+  # }
+  #
+  # Use Cases:
+  # - Annual business performance analysis
+  # - Monthly revenue trend monitoring
+  # - Financial reporting and planning
+  # - Identifying peak and low seasons
+}

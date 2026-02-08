@@ -55,6 +55,8 @@ func migrateDatabase(db *gorm.DB) error {
 		&models.Transaction{},
 		&models.StandSettings{},
 		&models.GlobalSettings{},
+		&models.Cart{},
+		&models.CartItem{},
 	)
 
 	if err != nil {
@@ -70,6 +72,8 @@ func migrateDatabase(db *gorm.DB) error {
 	log.Println("  - transactions")
 	log.Println("  - stand_settings")
 	log.Println("  - global_settings")
+	log.Println("  - carts")
+	log.Println("  - cart_items")
 
 	// Insert default global settings if they don't exist
 	var settingsCount int64

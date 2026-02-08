@@ -135,6 +135,142 @@ func (h *OrderHandler) GetOrders(c *gin.Context) {
 	c.JSON(http.StatusOK, orders)
 }
 
+// GetOrdersByMonth returns orders for the current student filtered by month
+func (h *OrderHandler) GetOrdersByMonth(c *gin.Context) {
+	userID, exists := c.Get("user_id")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
+		return
+	}
+
+	year := c.Query("year")
+	month := c.Query("month")
+
+	if year == "" || month == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Year and month parameters are required"})
+		return
+	}
+
+	// Build date range for the month
+	startDate := fmt.Sprintf("%s-%s-01", year, month)
+	endDate := fmt.Sprintf("%s-%s-31", year, month) // Simplified, assumes 31 days
+
+	var orders []models.Order
+	query := h.db.Where("user_id = ? AND created_at >= ? AND created_at <= ?", userID, startDate, endDate)
+	if err := query.Preload("OrderItems.Product").Preload("Stand").Find(&orders).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch orders"})
+		return
+	}
+
+	// Calculate monthly summary
+	var totalOrders int64
+	var totalAmount float64
+	for _, order := range orders {
+		totalOrders++
+		totalAmount += order.TotalAmount
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"orders": orders,
+		"summary": gin.H{
+			"year": year,
+			"month": month,
+			"total_orders": totalOrders,
+			"total_amount": totalAmount,
+		},
+	})
+}
+
+// GetOrderReceipt generates a printable receipt for an order
+func (h *OrderHandler) GetOrderReceipt(c *gin.Context) {
+	orderID := c.Param("id")
+	userID, exists := c.Get("user_id")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
+		return
+	}
+
+	var order models.Order
+	if err := h.db.Where("id = ? AND user_id = ?", orderID, userID).Preload("OrderItems.Product").Preload("Stand").First(&order).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Order not found"})
+		return
+	}
+
+	// Generate HTML receipt
+	receiptHTML := h.generateReceiptHTML(order)
+
+	c.Header("Content-Type", "text/html")
+	c.String(http.StatusOK, receiptHTML)
+}
+
+// generateReceiptHTML creates HTML receipt for printing
+func (h *OrderHandler) generateReceiptHTML(order models.Order) string {
+	html := fmt.Sprintf(`
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Receipt - %s</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 400px; margin: 0 auto; padding: 20px; }
+        .header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px; }
+        .order-info { margin-bottom: 20px; }
+        .items { margin-bottom: 20px; }
+        .item { display: flex; justify-content: space-between; margin-bottom: 5px; }
+        .total { border-top: 1px solid #000; padding-top: 10px; font-weight: bold; }
+        .footer { text-align: center; margin-top: 20px; font-size: 12px; color: #666; }
+        @media print { body { margin: 0; } }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h2>%s</h2>
+        <p>Order Receipt</p>
+    </div>
+    
+    <div class="order-info">
+        <p><strong>Order Number:</strong> %s</p>
+        <p><strong>Date:</strong> %s</p>
+        <p><strong>Payment Method:</strong> %s</p>
+        <p><strong>Status:</strong> %s</p>
+    </div>
+    
+    <div class="items">
+        <h3>Items:</h3>`,
+		order.OrderNumber,
+		order.Stand.Name,
+		order.OrderNumber,
+		order.CreatedAt.Format("2006-01-02 15:04:05"),
+		order.PaymentMethod,
+		order.Status)
+
+	for _, item := range order.OrderItems {
+		html += fmt.Sprintf(`
+        <div class="item">
+            <span>%s (x%d)</span>
+            <span>Rp %.0f</span>
+        </div>`, item.Product.Name, item.Quantity, item.Subtotal)
+	}
+
+	html += fmt.Sprintf(`
+    </div>
+    
+    <div class="total">
+        <div class="item">
+            <span>Total Amount:</span>
+            <span>Rp %.0f</span>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>Thank you for your order!</p>
+        <p>Generated on %s</p>
+    </div>
+</body>
+</html>`, order.TotalAmount, time.Now().Format("2006-01-02 15:04:05"))
+
+	return html
+}
+
 // DeleteOrder deletes an order for the current student (soft delete)
 func (h *OrderHandler) DeleteOrder(c *gin.Context) {
 	id := c.Param("id")

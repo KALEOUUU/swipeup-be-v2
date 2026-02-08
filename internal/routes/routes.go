@@ -24,6 +24,7 @@ func SetupRoutes(router *gin.Engine, db *gorm.DB) {
 	siswaUserHandler := siswa.NewUserHandler(db)
 	siswaOrderHandler := siswa.NewOrderHandler(db)
 	siswaMenuHandler := siswa.NewMenuHandler(db)
+	siswaCartHandler := siswa.NewCartHandler(db)
 	
 	// Stand handlers
 	standProductHandler := stand.NewProductHandler(db)
@@ -58,10 +59,26 @@ func SetupRoutes(router *gin.Engine, db *gorm.DB) {
 			siswaGroup.GET("/profile", siswaUserHandler.GetProfile)
 			siswaGroup.GET("/balance", siswaUserHandler.GetBalance)
 			siswaGroup.GET("/orders", siswaOrderHandler.GetOrders)
+			siswaGroup.GET("/orders/monthly", siswaOrderHandler.GetOrdersByMonth)
+			siswaGroup.GET("/orders/:id/receipt", siswaOrderHandler.GetOrderReceipt)
 			siswaGroup.POST("/orders", siswaOrderHandler.CreateOrder)
 			siswaGroup.DELETE("/orders/:id", siswaOrderHandler.DeleteOrder)
 			siswaGroup.GET("/transactions", siswaUserHandler.GetTransactions)
 			siswaGroup.GET("/products", siswaMenuHandler.GetProducts)
+			
+			// Cart management
+			cart := siswaGroup.Group("/cart")
+			{
+				cart.GET("", siswaCartHandler.GetCart)
+				cart.POST("/items", siswaCartHandler.AddToCart)
+				cart.PUT("/items/:id", siswaCartHandler.UpdateCartItem)
+				cart.DELETE("/items/:id", siswaCartHandler.RemoveFromCart)
+				cart.DELETE("", siswaCartHandler.ClearCart)
+				cart.POST("/checkout", siswaCartHandler.Checkout)
+				cart.GET("/qris/:stand_id", siswaCartHandler.GetQRISCode)
+				cart.GET("/orders/:order_id/qris", siswaCartHandler.GetQRISByOrder)
+				cart.POST("/orders/:order_id/payment-proof", siswaCartHandler.UploadPaymentProof)
+			}
 		}
 		
 		// Stand admin routes (protected + stand role)
@@ -88,6 +105,8 @@ func SetupRoutes(router *gin.Engine, db *gorm.DB) {
 				orders.POST("", standOrderHandler.CreateOrder)
 				orders.PUT("/:id/status", standOrderHandler.UpdateOrderStatus)
 				orders.DELETE("/:id", standOrderHandler.DeleteOrder)
+				orders.GET("/monthly", standOrderHandler.GetOrdersByMonth)
+				orders.GET("/revenue/monthly", standOrderHandler.GetMonthlyRevenueRecap)
 			}
 			
 			// Category management

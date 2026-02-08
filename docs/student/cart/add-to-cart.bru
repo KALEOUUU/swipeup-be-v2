@@ -1,0 +1,16 @@
+meta {
+  name: add-to-cart
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{BASE_URL}}/api/v1/siswa/cart/items
+  body: json
+  auth: bearer
+}
+
+{
+  "product_id": 1,
+  "quantity": 2
+}

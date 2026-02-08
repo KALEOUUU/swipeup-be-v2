@@ -1,6 +1,7 @@
 package stand
 
 import (
+	"fmt"
 	"net/http"
 	"swipeup-admin-v2/internal/app/models"
 	"time"
@@ -33,6 +34,128 @@ func (h *OrderHandler) GetOrders(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, orders)
+}
+
+// GetOrdersByMonth returns orders for the current stand filtered by month
+func (h *OrderHandler) GetOrdersByMonth(c *gin.Context) {
+	standID, exists := c.Get("user_id")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
+		return
+	}
+
+	year := c.Query("year")
+	month := c.Query("month")
+
+	if year == "" || month == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Year and month parameters are required"})
+		return
+	}
+
+	// Build date range for the month
+	startDate := fmt.Sprintf("%s-%s-01", year, month)
+	endDate := fmt.Sprintf("%s-%s-31", year, month) // Simplified, assumes 31 days
+
+	var orders []models.Order
+	query := h.db.Where("stand_id = ? AND created_at >= ? AND created_at <= ?", standID, startDate, endDate)
+	if err := query.Preload("User").Preload("OrderItems.Product").Find(&orders).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch orders"})
+		return
+	}
+
+	// Calculate monthly summary
+	var totalOrders int64
+	var totalRevenue float64
+	var completedOrders int64
+	var pendingOrders int64
+
+	for _, order := range orders {
+		totalOrders++
+		totalRevenue += order.TotalAmount
+		if order.Status == "done" {
+			completedOrders++
+		} else if order.Status == "payment_pending" || order.Status == "request" {
+			pendingOrders++
+		}
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"orders": orders,
+		"summary": gin.H{
+			"year": year,
+			"month": month,
+			"total_orders": totalOrders,
+			"completed_orders": completedOrders,
+			"pending_orders": pendingOrders,
+			"total_revenue": totalRevenue,
+		},
+	})
+}
+
+// GetMonthlyRevenueRecap returns monthly revenue recap for the current stand
+func (h *OrderHandler) GetMonthlyRevenueRecap(c *gin.Context) {
+	standID, exists := c.Get("user_id")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
+		return
+	}
+
+	year := c.Query("year")
+	if year == "" {
+		year = fmt.Sprintf("%d", time.Now().Year())
+	}
+
+	// Get revenue data for each month of the year
+	var monthlyData []gin.H
+
+	for month := 1; month <= 12; month++ {
+		startDate := fmt.Sprintf("%s-%02d-01", year, month)
+		endDate := fmt.Sprintf("%s-%02d-31", year, month)
+
+		var result struct {
+			TotalOrders   int64   `json:"total_orders"`
+			TotalRevenue  float64 `json:"total_revenue"`
+			CompletedOrders int64 `json:"completed_orders"`
+		}
+
+		h.db.Model(&models.Order{}).
+			Where("stand_id = ? AND created_at >= ? AND created_at <= ?", standID, startDate, endDate).
+			Select("COUNT(*) as total_orders, SUM(total_amount) as total_revenue, SUM(CASE WHEN status = 'done' THEN 1 ELSE 0 END) as completed_orders").
+			Scan(&result)
+
+		monthlyData = append(monthlyData, gin.H{
+			"month": month,
+			"month_name": time.Month(month).String(),
+			"total_orders": result.TotalOrders,
+			"completed_orders": result.CompletedOrders,
+			"total_revenue": result.TotalRevenue,
+		})
+	}
+
+	// Calculate yearly totals
+	var yearlyTotal struct {
+		TotalOrders   int64   `json:"total_orders"`
+		TotalRevenue  float64 `json:"total_revenue"`
+		CompletedOrders int64 `json:"completed_orders"`
+	}
+
+	startYear := fmt.Sprintf("%s-01-01", year)
+	endYear := fmt.Sprintf("%s-12-31", year)
+
+	h.db.Model(&models.Order{}).
+		Where("stand_id = ? AND created_at >= ? AND created_at <= ?", standID, startYear, endYear).
+		Select("COUNT(*) as total_orders, SUM(total_amount) as total_revenue, SUM(CASE WHEN status = 'done' THEN 1 ELSE 0 END) as completed_orders").
+		Scan(&yearlyTotal)
+
+	c.JSON(http.StatusOK, gin.H{
+		"year": year,
+		"monthly_data": monthlyData,
+		"yearly_summary": gin.H{
+			"total_orders": yearlyTotal.TotalOrders,
+			"completed_orders": yearlyTotal.CompletedOrders,
+			"total_revenue": yearlyTotal.TotalRevenue,
+		},
+	})
 }
 
 // GetOrder returns a single order by ID

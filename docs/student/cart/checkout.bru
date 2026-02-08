@@ -1,0 +1,15 @@
+meta {
+  name: checkout
+  type: http
+  seq: 11
+}
+
+post {
+  url: {{BASE_URL}}/api/v1/siswa/cart/checkout
+  body: json
+  auth: bearer
+}
+
+{
+  "payment_method": "card"
+}

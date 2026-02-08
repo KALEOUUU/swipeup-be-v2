@@ -1,0 +1,15 @@
+meta {
+  name: update-cart-item
+  type: http
+  seq: 8
+}
+
+put {
+  url: {{BASE_URL}}/api/v1/siswa/cart/items/{{cart_item_id}}
+  body: json
+  auth: bearer
+}
+
+{
+  "quantity": 3
+}

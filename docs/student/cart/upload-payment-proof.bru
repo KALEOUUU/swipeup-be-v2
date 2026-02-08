@@ -1,0 +1,13 @@
+meta {
+  name: upload-payment-proof
+  type: http
+  seq: 15
+}
+
+post {
+  url: {{BASE_URL}}/api/v1/siswa/cart/orders/1/payment-proof
+  body: form-urlencoded
+  auth: bearer
+}
+
+payment_proof: @/path/to/payment_proof.jpg

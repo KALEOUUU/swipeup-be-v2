@@ -1,0 +1,20 @@
+meta {
+  name: checkout-cash
+  type: http
+  seq: 12
+}
+
+post {
+  url: {{BASE_URL}}/api/v1/siswa/cart/checkout
+  body: json
+  auth: bearer
+}
+
+{
+  "payment_method": "cash",
+  "cash_amount": 100000
+}
+
+// Response akan include:
+// - order: single order object (bukan array)
+// - message: "Checkout successful"

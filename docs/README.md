@@ -21,8 +21,15 @@ This directory contains Bruno API documentation for testing the Swipeup School C
   - Get Profile
   - Get Balance
   - Get Orders
-  - Create Order
-  - **Delete Order** (cancel order before completion)
+  - Create Order (direct/quick order)
+  - Delete Order (cancel order before completion)
+  - **Cart Management** (new enhanced flow)
+    - Get Cart
+    - Add Item to Cart
+    - Update Cart Item
+    - Remove Item from Cart
+    - Clear Cart
+    - Checkout (create orders from cart)
   - Get Transactions
 
 - **stand/** - Stand Admin endpoints (requires stand token)
@@ -34,6 +41,9 @@ This directory contains Bruno API documentation for testing the Swipeup School C
     - Create Order
     - Update Order Status
     - **Delete Order** (cancel order before completion)
+    - **📊 Monthly Reporting** (new analytics features)
+      - Get Orders by Month (detailed monthly orders with summary)
+      - Get Monthly Revenue Recap (annual revenue analytics)
   - Settings Management
 
 - **admin/** - Admin endpoints (requires admin token)
@@ -70,3 +80,37 @@ ADMIN_TOKEN=<your_admin_token>
 ```
 http://localhost:8080/api/v1
 ```
+
+## 📊 New Reporting Features
+
+### Stand Admin Monthly Analytics
+
+Two new endpoints have been added to provide comprehensive business intelligence for stand administrators:
+
+#### 1. Get Orders by Month
+**Endpoint**: `GET /api/v1/stand/orders/monthly?year=2024&month=2`
+
+Returns detailed orders for a specific month along with summary statistics:
+- Complete order details with user and product information
+- Monthly totals: total orders, completed orders, pending orders, total revenue
+- Perfect for detailed monthly performance analysis
+
+#### 2. Get Monthly Revenue Recap
+**Endpoint**: `GET /api/v1/stand/orders/revenue/monthly?year=2024`
+
+Provides annual revenue analytics with monthly breakdown:
+- 12-month revenue and order statistics
+- Yearly summary totals
+- Ideal for trend analysis, financial planning, and business reporting
+
+### Usage Examples
+
+```bash
+# Get February 2024 orders with details
+GET /api/v1/stand/orders/monthly?year=2024&month=2
+
+# Get complete 2024 revenue analytics
+GET /api/v1/stand/orders/revenue/monthly?year=2024
+```
+
+These features help stand administrators track business performance, identify trends, and make data-driven decisions for their canteen operations.

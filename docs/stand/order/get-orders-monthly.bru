@@ -1,0 +1,80 @@
+meta {
+  name: "Get Orders by Month"
+  type: http
+  seq: 8
+}
+
+get {
+  url: {{BASE_URL}}/api/v1/stand/orders/monthly?year=2024&month=2
+  body: none
+  auth: bearer
+}
+
+headers {
+  Content-Type: "application/json"
+  Authorization: "Bearer {{STAND_TOKEN}}"
+}
+
+auth:basic {
+  username: ""
+  password: ""
+}
+
+vars:pre-request {
+  BASE_URL: http://localhost:8080
+}
+
+docs {
+  # Get Orders by Month
+  #
+  # This endpoint retrieves all orders for the authenticated stand filtered by a specific month and year.
+  # It includes detailed order information along with monthly summary statistics.
+  #
+  # Query Parameters:
+  # - year (required): The year to filter orders (e.g., 2024)
+  # - month (required): The month to filter orders (1-12, e.g., 2 for February)
+  #
+  # Response includes:
+  # - orders: Array of order objects with full details
+  # - summary: Monthly statistics including total orders, completed orders, pending orders, and total revenue
+  #
+  # Example Response:
+  # {
+  #   "orders": [
+  #     {
+  #       "id": 1,
+  #       "order_number": "ORD-52-51-1770580952",
+  #       "user_id": 52,
+  #       "total_amount": 23520,
+  #       "status": "done",
+  #       "payment_method": "cash",
+  #       "created_at": "2024-02-09T03:02:32.13Z",
+  #       "user": {
+  #         "id": 52,
+  #         "name": "John Doe",
+  #         "email": "john@example.com"
+  #       },
+  #       "order_items": [
+  #         {
+  #           "product_id": 5,
+  #           "quantity": 1,
+  #           "price": 23520,
+  #           "subtotal": 23520,
+  #           "product": {
+  #             "name": "Montblanc",
+  #             "price": 23520
+  #           }
+  #         }
+  #       ]
+  #     }
+  #   ],
+  #   "summary": {
+  #     "year": "2024",
+  #     "month": "2",
+  #     "total_orders": 15,
+  #     "completed_orders": 12,
+  #     "pending_orders": 3,
+  #     "total_revenue": 352800
+  #   }
+  # }
+}

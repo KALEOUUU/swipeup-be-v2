@@ -1,0 +1,11 @@
+meta {
+  name: clear-cart
+  type: http
+  seq: 10
+}
+
+delete {
+  url: {{BASE_URL}}/api/v1/siswa/cart
+  body: none
+  auth: bearer
+}
