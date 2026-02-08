@@ -1,0 +1,79 @@
+meta {
+  name: Create Order
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{base_url}}/api/v1/siswa/orders
+  body: json
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+}
+
+auth:bearer {
+  token: {{student_token}}
+}
+
+body:json {
+  {
+    "items": [
+      {
+        "product_id": 1,
+        "quantity": 2
+      },
+      {
+        "product_id": 2,
+        "quantity": 1
+      }
+    ]
+  }
+}
+
+vars:pre-request {
+  base_url: http://localhost:8080
+}
+
+docs {
+  ## Create Order (Student)
+  
+  Create a new order from any stand. Students can order products from multiple stands in a single request, and the system will automatically create separate orders for each stand.
+
+  ### Request Body
+  - `payment_method`: Payment method ("cash" or "card")
+  - `items`: Array of order items
+    - `product_id`: ID of the product to order
+    - `quantity`: Quantity of the product
+
+  ### Response
+  Returns a success message and an array of created orders (one order per stand):
+  ```json
+  {
+    "message": "Orders created successfully",
+    "orders": [
+      {
+        "id": 1,
+        "order_number": "ORD-123-456-1707400000",
+        "user_id": 123,
+        "total_amount": 33000,
+        "status": "request",
+        "payment_method": "cash",
+        "stand_id": 456,
+        "order_items": [...]
+      }
+    ]
+  }
+  ```
+
+  ### Authentication
+  Requires student JWT token in Authorization header.
+
+  ### Notes
+  - Products are validated for availability and stock
+  - Orders are automatically grouped by stand
+  - Each stand gets its own separate order
+  - Order status starts as 'request'
+  - Supports ordering from multiple stands simultaneously

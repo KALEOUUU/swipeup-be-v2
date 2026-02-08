@@ -1,0 +1,44 @@
+meta {
+  name: Get Products
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{base_url}}/api/v1/siswa/products
+  body: none
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+}
+
+auth:bearer {
+  token: {{student_token}}
+}
+
+vars:pre-request {
+  base_url: http://localhost:8080
+}
+
+docs {
+  ## Get All Products (Student)
+  
+  Retrieve all active products from all active stands. This endpoint allows students to browse the complete menu from all canteen stands.
+  
+  ### Response
+  Returns an array of active products with full details including:
+  - Product information (name, description, price, stock, image, discount)
+  - Category information
+  - Stand information
+  
+  ### Authentication
+  Requires student JWT token in Authorization header.
+  
+  ### Notes
+  - Only returns products from active stands
+  - Only returns products in active categories
+  - Includes discounted_price calculated automatically
+  - Products are filtered by is_active = true
+}

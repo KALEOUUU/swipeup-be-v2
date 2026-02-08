@@ -51,22 +51,6 @@ func (h *UserHandler) GetBalance(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"balance": user.Balance})
 }
 
-// GetOrders returns the current user's orders
-func (h *UserHandler) GetOrders(c *gin.Context) {
-	userID, exists := c.Get("user_id")
-	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
-		return
-	}
-
-	var orders []models.Order
-	if err := h.db.Preload("OrderItems.Product").Where("user_id = ?", userID).Find(&orders).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch orders"})
-		return
-	}
-	c.JSON(http.StatusOK, orders)
-}
-
 // GetTransactions returns the current user's transactions
 func (h *UserHandler) GetTransactions(c *gin.Context) {
 	userID, exists := c.Get("user_id")

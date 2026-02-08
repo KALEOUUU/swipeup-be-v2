@@ -1,0 +1,42 @@
+meta {
+  name: Get Orders
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{base_url}}/api/v1/siswa/orders
+  body: none
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+}
+
+auth:bearer {
+  token: {{student_token}}
+}
+
+vars:pre-request {
+  base_url: http://localhost:8080
+}
+
+docs {
+  ## Get Orders (Student)
+  
+  Retrieve all orders placed by the current student.
+  
+  ### Response
+  Returns an array of orders with full details including:
+  - Order information (number, status, total amount, payment method)
+  - Order items with product details
+  - Stand information
+  
+  ### Authentication
+  Requires student JWT token in Authorization header.
+  
+  ### Notes
+  - Returns orders from all stands
+  - Includes product and stand details in response
+}

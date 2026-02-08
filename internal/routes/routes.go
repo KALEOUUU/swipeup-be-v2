@@ -22,6 +22,8 @@ func SetupRoutes(router *gin.Engine, db *gorm.DB) {
 	
 	// Student handlers
 	siswaUserHandler := siswa.NewUserHandler(db)
+	siswaOrderHandler := siswa.NewOrderHandler(db)
+	siswaMenuHandler := siswa.NewMenuHandler(db)
 	
 	// Stand handlers
 	standProductHandler := stand.NewProductHandler(db)
@@ -55,8 +57,10 @@ func SetupRoutes(router *gin.Engine, db *gorm.DB) {
 		{
 			siswaGroup.GET("/profile", siswaUserHandler.GetProfile)
 			siswaGroup.GET("/balance", siswaUserHandler.GetBalance)
-			siswaGroup.GET("/orders", siswaUserHandler.GetOrders)
+			siswaGroup.GET("/orders", siswaOrderHandler.GetOrders)
+			siswaGroup.POST("/orders", siswaOrderHandler.CreateOrder)
 			siswaGroup.GET("/transactions", siswaUserHandler.GetTransactions)
+			siswaGroup.GET("/products", siswaMenuHandler.GetProducts)
 		}
 		
 		// Stand admin routes (protected + stand role)
