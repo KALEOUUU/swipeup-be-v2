@@ -1,0 +1,11 @@
+meta {
+  name: delete-order
+  type: http
+  seq: 11
+}
+
+delete {
+  url: {{BASE_URL}}/api/v1/stand/orders/{{order_id}}
+  body: none
+  auth: bearer
+}

@@ -59,6 +59,7 @@ func SetupRoutes(router *gin.Engine, db *gorm.DB) {
 			siswaGroup.GET("/balance", siswaUserHandler.GetBalance)
 			siswaGroup.GET("/orders", siswaOrderHandler.GetOrders)
 			siswaGroup.POST("/orders", siswaOrderHandler.CreateOrder)
+			siswaGroup.DELETE("/orders/:id", siswaOrderHandler.DeleteOrder)
 			siswaGroup.GET("/transactions", siswaUserHandler.GetTransactions)
 			siswaGroup.GET("/products", siswaMenuHandler.GetProducts)
 		}
@@ -86,6 +87,7 @@ func SetupRoutes(router *gin.Engine, db *gorm.DB) {
 				orders.GET("/:id", standOrderHandler.GetOrder)
 				orders.POST("", standOrderHandler.CreateOrder)
 				orders.PUT("/:id/status", standOrderHandler.UpdateOrderStatus)
+				orders.DELETE("/:id", standOrderHandler.DeleteOrder)
 			}
 			
 			// Category management

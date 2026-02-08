@@ -1,0 +1,11 @@
+meta {
+  name: delete-order
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{BASE_URL}}/api/v1/siswa/orders/{{order_id}}
+  body: none
+  auth: bearer
+}

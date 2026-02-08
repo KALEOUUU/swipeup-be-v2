@@ -225,9 +225,10 @@ func (h *OrderHandler) UpdateOrderStatus(c *gin.Context) {
 	// Validate status
 	validStatuses := map[string]bool{
 		"payment_pending": true,
-		"request":       true,
-		"cooking":       true,
-		"done":          true,
+		"request":         true,
+		"cooking":         true,
+		"done":            true,
+		"cancelled":       true,
 	}
 	if !validStatuses[req.Status] {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid status"})
@@ -247,6 +248,36 @@ func (h *OrderHandler) UpdateOrderStatus(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Order status updated successfully", "status": order.Status})
+}
+
+// DeleteOrder deletes an order for the current stand (soft delete)
+func (h *OrderHandler) DeleteOrder(c *gin.Context) {
+	id := c.Param("id")
+	standID, exists := c.Get("user_id")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
+		return
+	}
+
+	var order models.Order
+	if err := h.db.Where("id = ? AND stand_id = ?", id, standID).First(&order).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Order not found"})
+		return
+	}
+
+	// Only allow deletion of orders that haven't been completed or cancelled
+	if order.Status == "done" || order.Status == "cancelled" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Cannot delete completed or cancelled orders"})
+		return
+	}
+
+	// Soft delete the order
+	if err := h.db.Delete(&order).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete order"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Order deleted successfully"})
 }
 
 // GetPendingOrders returns all pending orders for the current stand

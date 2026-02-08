@@ -21,11 +21,19 @@ This directory contains Bruno API documentation for testing the Swipeup School C
   - Get Profile
   - Get Balance
   - Get Orders
+  - Create Order
+  - **Delete Order** (cancel order before completion)
   - Get Transactions
 
 - **stand/** - Stand Admin endpoints (requires stand token)
   - Products Management
   - Orders Management
+    - Get Orders
+    - Get Pending Orders
+    - Get Order by ID
+    - Create Order
+    - Update Order Status
+    - **Delete Order** (cancel order before completion)
   - Settings Management
 
 - **admin/** - Admin endpoints (requires admin token)

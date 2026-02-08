@@ -18,7 +18,7 @@ type Order struct {
 	UserID         uint       `json:"user_id" gorm:"not null;index"`
 	User           User       `json:"user" gorm:"foreignKey:UserID"`
 	TotalAmount    float64    `json:"total_amount" gorm:"not null"`
-	Status         string     `json:"status" gorm:"not null;size:20;default:'payment_pending'"` // payment_pending, request, cooking, done
+	Status         string     `json:"status" gorm:"not null;size:20;default:'payment_pending'"` // payment_pending, request, cooking, done, cancelled
 	PaymentMethod  string     `json:"payment_method" gorm:"size:20;default:'card'"`        // card, cash
 	StandID        uint       `json:"stand_id" gorm:"not null;index"` // Canteen stand ID
 	Stand          User       `json:"stand" gorm:"foreignKey:StandID"` // Reference to stand admin

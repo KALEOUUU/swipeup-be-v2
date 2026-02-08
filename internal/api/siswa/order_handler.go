@@ -134,3 +134,33 @@ func (h *OrderHandler) GetOrders(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, orders)
 }
+
+// DeleteOrder deletes an order for the current student (soft delete)
+func (h *OrderHandler) DeleteOrder(c *gin.Context) {
+	id := c.Param("id")
+	userID, exists := c.Get("user_id")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
+		return
+	}
+
+	var order models.Order
+	if err := h.db.Where("id = ? AND user_id = ?", id, userID).First(&order).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Order not found"})
+		return
+	}
+
+	// Only allow deletion of orders that are still pending or in request status
+	if order.Status != "payment_pending" && order.Status != "request" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Can only cancel orders that are pending or in request status"})
+		return
+	}
+
+	// Soft delete the order
+	if err := h.db.Delete(&order).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to cancel order"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Order cancelled successfully"})
+}
