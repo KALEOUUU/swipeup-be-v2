@@ -31,6 +31,9 @@ This directory contains Bruno API documentation for testing the Swipeup School C
     - Clear Cart
     - Checkout (create orders from cart)
   - Get Transactions
+  - **📊 Monthly Reporting** (new analytics features)
+    - Get Orders by Month (monthly order history with summary)
+    - Get Order Receipt (printable order receipt)
 
 - **stand/** - Stand Admin endpoints (requires stand token)
   - Products Management
@@ -83,11 +86,21 @@ http://localhost:8080/api/v1
 
 ## 📊 New Reporting Features
 
+### Student Monthly Analytics
+
+#### 1. Get Orders by Month
+**Endpoint**: `GET /api/v1/siswa/orders/monthly?year=2024&month=2`
+
+Returns student's order history for a specific month with summary statistics:
+- Complete order details with product information
+- Monthly totals: total orders, completed orders, pending orders, total spending
+- Perfect for personal expense tracking and order history review
+
 ### Stand Admin Monthly Analytics
 
 Two new endpoints have been added to provide comprehensive business intelligence for stand administrators:
 
-#### 1. Get Orders by Month
+#### 2. Get Orders by Month
 **Endpoint**: `GET /api/v1/stand/orders/monthly?year=2024&month=2`
 
 Returns detailed orders for a specific month along with summary statistics:
@@ -95,7 +108,7 @@ Returns detailed orders for a specific month along with summary statistics:
 - Monthly totals: total orders, completed orders, pending orders, total revenue
 - Perfect for detailed monthly performance analysis
 
-#### 2. Get Monthly Revenue Recap
+#### 3. Get Monthly Revenue Recap
 **Endpoint**: `GET /api/v1/stand/orders/revenue/monthly?year=2024`
 
 Provides annual revenue analytics with monthly breakdown:
@@ -103,14 +116,31 @@ Provides annual revenue analytics with monthly breakdown:
 - Yearly summary totals
 - Ideal for trend analysis, financial planning, and business reporting
 
+### Student Receipt Printing
+
+#### 4. Get Order Receipt
+**Endpoint**: `GET /api/v1/siswa/orders/{id}/receipt`
+
+Generates printable HTML receipt for any completed order:
+- Professional receipt layout with order details
+- Itemized list with quantities and prices
+- Ready-to-print HTML format
+- Perfect for record keeping and expense tracking
+
 ### Usage Examples
 
 ```bash
-# Get February 2024 orders with details
+# Student: Get February 2024 order history
+GET /api/v1/siswa/orders/monthly?year=2024&month=2
+
+# Student: Get printable receipt for order #15
+GET /api/v1/siswa/orders/15/receipt
+
+# Stand Admin: Get February 2024 orders with details
 GET /api/v1/stand/orders/monthly?year=2024&month=2
 
-# Get complete 2024 revenue analytics
+# Stand Admin: Get complete 2024 revenue analytics
 GET /api/v1/stand/orders/revenue/monthly?year=2024
 ```
 
-These features help stand administrators track business performance, identify trends, and make data-driven decisions for their canteen operations.
+These features help both students and stand administrators track orders, manage finances, and maintain proper records for their canteen operations.

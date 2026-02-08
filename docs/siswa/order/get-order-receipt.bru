@@ -1,0 +1,98 @@
+meta {
+  name: "Get Order Receipt"
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{BASE_URL}}/api/v1/siswa/orders/15/receipt
+  body: none
+  auth: bearer
+}
+
+headers {
+  Content-Type: "application/json"
+  Authorization: "Bearer {{STUDENT_TOKEN}}"
+}
+
+auth:basic {
+  username: ""
+  password: ""
+}
+
+vars:pre-request {
+  BASE_URL: http://localhost:8080
+}
+
+docs {
+  # Get Order Receipt
+  #
+  # This endpoint generates a printable HTML receipt for a specific order.
+  # The receipt includes order details, items, pricing, and can be printed directly from the browser.
+  #
+  # Path Parameters:
+  # - id (required): The order ID to generate receipt for
+  #
+  # Response: HTML content that can be displayed in a browser and printed
+  #
+  # Example HTML Response (simplified):
+  # <!DOCTYPE html>
+  # <html>
+  # <head>
+  #   <title>Order Receipt - ORD-51-51-1770581708</title>
+  #   <style>
+  #     body { font-family: Arial, sans-serif; max-width: 400px; margin: 0 auto; }
+  #     .header { text-align: center; border-bottom: 2px solid #333; padding-bottom: 10px; }
+  #     .order-info { margin: 20px 0; }
+  #     .items { border-collapse: collapse; width: 100%; }
+  #     .items th, .items td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+  #     .total { font-weight: bold; font-size: 18px; margin-top: 20px; }
+  #   </style>
+  # </head>
+  # <body>
+  #   <div class="header">
+  #     <h1>SwipeUp Receipt</h1>
+  #     <p>Order #ORD-51-51-1770581708</p>
+  #   </div>
+  #
+  #   <div class="order-info">
+  #     <p><strong>Customer:</strong> Student Name</p>
+  #     <p><strong>Date:</strong> 2024-02-09 03:15:08</p>
+  #     <p><strong>Payment:</strong> Cash</p>
+  #   </div>
+  #
+  #   <table class="items">
+  #     <thead>
+  #       <tr>
+  #         <th>Item</th>
+  #         <th>Qty</th>
+  #         <th>Price</th>
+  #         <th>Subtotal</th>
+  #       </tr>
+  #     </thead>
+  #     <tbody>
+  #       <tr>
+  #         <td>Montblanc</td>
+  #         <td>1</td>
+  #         <td>Rp 23,520</td>
+  #         <td>Rp 23,520</td>
+  #       </tr>
+  #     </tbody>
+  #   </table>
+  #
+  #   <div class="total">
+  #     <p>Total: Rp 23,520</p>
+  #   </div>
+  #
+  #   <div style="text-align: center; margin-top: 30px; font-size: 12px; color: #666;">
+  #     <p>Thank you for your order!</p>
+  #     <p>SwipeUp - School Canteen POS</p>
+  #   </div>
+  # </body>
+  # </html>
+  #
+  # Usage:
+  # - Open the response in a browser
+  # - Use browser's print function (Ctrl+P / Cmd+P)
+  # - Print or save as PDF for record keeping
+}
