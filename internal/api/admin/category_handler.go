@@ -41,12 +41,32 @@ func (h *CategoryHandler) GetCategory(c *gin.Context) {
 
 // CreateCategory creates a new category
 func (h *CategoryHandler) CreateCategory(c *gin.Context) {
-	var category models.Category
-	if err := c.ShouldBindJSON(&category); err != nil {
+	var req models.Category
+	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
+	// Check if a deleted category with the same name exists
+	var existing models.Category
+	if err := h.db.Unscoped().Where("name = ?", req.Name).First(&existing).Error; err == nil {
+		// Restore the deleted category
+		existing.Description = req.Description
+		existing.IsActive = req.IsActive
+		if err := h.db.Unscoped().Model(&existing).Update("deleted_at", nil).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to restore category"})
+			return
+		}
+		c.JSON(http.StatusCreated, existing)
+		return
+	}
+
+	// Create new category
+	category := models.Category{
+		Name:        req.Name,
+		Description: req.Description,
+		IsActive:    req.IsActive,
+	}
 	if err := h.db.Create(&category).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create category"})
 		return
@@ -64,10 +84,36 @@ func (h *CategoryHandler) UpdateCategory(c *gin.Context) {
 		return
 	}
 
-	if err := c.ShouldBindJSON(&category); err != nil {
+	var req models.Category
+	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
+	// Check if updating to a name that exists in deleted categories
+	if req.Name != category.Name {
+		var existing models.Category
+		if err := h.db.Unscoped().Where("name = ?", req.Name).First(&existing).Error; err == nil && existing.ID != category.ID {
+			// Restore the deleted category and delete the current one
+			existing.Description = req.Description
+			existing.IsActive = req.IsActive
+			if err := h.db.Unscoped().Model(&existing).Update("deleted_at", nil).Error; err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to restore category"})
+				return
+			}
+			if err := h.db.Delete(&category).Error; err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete old category"})
+				return
+			}
+			c.JSON(http.StatusOK, existing)
+			return
+		}
+	}
+
+	// Update the category
+	category.Name = req.Name
+	category.Description = req.Description
+	category.IsActive = req.IsActive
 
 	if err := h.db.Save(&category).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update category"})

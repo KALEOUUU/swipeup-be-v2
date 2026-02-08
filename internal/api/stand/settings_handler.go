@@ -1,6 +1,7 @@
 package stand
 
 import (
+	"errors"
 	"net/http"
 	"swipeup-admin-v2/internal/app/models"
 
@@ -50,7 +51,8 @@ func (h *SettingsHandler) UpdateSettings(c *gin.Context) {
 
 	var req struct {
 		StoreName string `json:"store_name" binding:"required"`
-		QRIS      string `json:"qris" binding:"required"`
+		QRIS      string `json:"qris"`
+		QRISBase64 string `json:"qris_base64"`
 		IsActive  *bool  `json:"is_active"`
 	}
 
@@ -59,8 +61,21 @@ func (h *SettingsHandler) UpdateSettings(c *gin.Context) {
 		return
 	}
 
+	if req.QRIS == "" && req.QRISBase64 != "" {
+		req.QRIS = req.QRISBase64
+	}
+
+	if req.QRIS == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "qris is required"})
+		return
+	}
+
 	var settings models.StandSettings
 	if err := h.db.Where("stand_id = ?", standID).First(&settings).Error; err != nil {
+		if !errors.Is(err, gorm.ErrRecordNotFound) {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch settings"})
+			return
+		}
 		// Create new settings if not found
 		settings = models.StandSettings{
 			StandID:   standID.(uint),
@@ -74,6 +89,19 @@ func (h *SettingsHandler) UpdateSettings(c *gin.Context) {
 		}
 
 		if err := h.db.Create(&settings).Error; err != nil {
+			var existing models.StandSettings
+			if errLookup := h.db.Unscoped().Where("stand_id = ?", standID).First(&existing).Error; errLookup == nil {
+				existing.StoreName = req.StoreName
+				existing.QRIS = req.QRIS
+				if req.IsActive != nil {
+					existing.IsActive = *req.IsActive
+				}
+				existing.DeletedAt = gorm.DeletedAt{}
+				if errSave := h.db.Unscoped().Save(&existing).Error; errSave == nil {
+					c.JSON(http.StatusOK, existing)
+					return
+				}
+			}
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create settings"})
 			return
 		}
@@ -103,11 +131,20 @@ func (h *SettingsHandler) UpdateQRIS(c *gin.Context) {
 	}
 
 	var req struct {
-		QRIS string `json:"qris" binding:"required"`
+		QRIS      string `json:"qris"`
+		QRISBase64 string `json:"qris_base64"`
 	}
 
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if req.QRIS == "" && req.QRISBase64 != "" {
+		req.QRIS = req.QRISBase64
+	}
+	if req.QRIS == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "qris is required"})
 		return
 	}
 

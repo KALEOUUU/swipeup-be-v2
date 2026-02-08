@@ -73,8 +73,7 @@ func (h *ProductHandler) CreateProduct(c *gin.Context) {
 		CategoryID  uint    `json:"category_id" binding:"required"`
 		Price       float64 `json:"price" binding:"required"`
 		Stock       int     `json:"stock" binding:"required"`
-		ImageBase64 string  `json:"image_base64"`
-		QRISBase64  string  `json:"qris_base64"`
+		ImageURL    string  `json:"image_url"`
 		Discount    float64 `json:"discount" binding:"min=0,max=100"`
 	}
 
@@ -89,12 +88,10 @@ func (h *ProductHandler) CreateProduct(c *gin.Context) {
 		CategoryID:  req.CategoryID,
 		Price:       req.Price,
 		Stock:       req.Stock,
-		ImageBase64: req.ImageBase64,
-		QRISBase64:  req.QRISBase64,
+		ImageURL:    req.ImageURL,
 		Discount:     req.Discount,
 		IsActive:    true,
 		StandID:      standID.(uint),
-		Status:       "request", // Default status for new products
 	}
 
 	if err := h.db.Create(&product).Error; err != nil {
@@ -126,11 +123,9 @@ func (h *ProductHandler) UpdateProduct(c *gin.Context) {
 		CategoryID  uint    `json:"category_id"`
 		Price       float64 `json:"price"`
 		Stock       int     `json:"stock"`
-		ImageBase64 string  `json:"image_base64"`
-		QRISBase64  string  `json:"qris_base64"`
+		ImageURL    string  `json:"image_url"`
 		Discount    float64 `json:"discount" binding:"min=0,max=100"`
 		IsActive    *bool   `json:"is_active"`
-		Status      *string `json:"status"`
 	}
 
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -154,20 +149,14 @@ func (h *ProductHandler) UpdateProduct(c *gin.Context) {
 	if req.Stock != 0 {
 		product.Stock = req.Stock
 	}
-	if req.ImageBase64 != "" {
-		product.ImageBase64 = req.ImageBase64
-	}
-	if req.QRISBase64 != "" {
-		product.QRISBase64 = req.QRISBase64
+	if req.ImageURL != "" {
+		product.ImageURL = req.ImageURL
 	}
 	if req.Discount >= 0 {
 		product.Discount = req.Discount
 	}
 	if req.IsActive != nil {
 		product.IsActive = *req.IsActive
-	}
-	if req.Status != nil {
-		product.Status = *req.Status
 	}
 
 	if err := h.db.Save(&product).Error; err != nil {
@@ -194,7 +183,7 @@ func (h *ProductHandler) DeleteProduct(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Product deleted successfully"})
 }
 
-// UpdateProductStatus updates product status
+// UpdateProductStatus updates product active status
 func (h *ProductHandler) UpdateProductStatus(c *gin.Context) {
 	id := c.Param("id")
 	standID, exists := c.Get("user_id")
@@ -212,12 +201,10 @@ func (h *ProductHandler) UpdateProductStatus(c *gin.Context) {
 		return
 	}
 
-	// Validate status
+	// Validate status - assuming status means active/inactive
 	validStatuses := map[string]bool{
-		"payment_pending": true,
-		"request":       true,
-		"cooking":       true,
-		"done":          true,
+		"active":   true,
+		"inactive": true,
 	}
 	if !validStatuses[req.Status] {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid status"})
@@ -230,11 +217,11 @@ func (h *ProductHandler) UpdateProductStatus(c *gin.Context) {
 		return
 	}
 
-	product.Status = req.Status
+	product.IsActive = req.Status == "active"
 	if err := h.db.Save(&product).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update product status"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Product status updated successfully", "status": product.Status})
+	c.JSON(http.StatusOK, gin.H{"message": "Product status updated successfully", "is_active": product.IsActive})
 }

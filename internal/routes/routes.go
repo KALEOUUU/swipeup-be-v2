@@ -27,6 +27,7 @@ func SetupRoutes(router *gin.Engine, db *gorm.DB) {
 	standProductHandler := stand.NewProductHandler(db)
 	standOrderHandler := stand.NewOrderHandler(db)
 	standSettingsHandler := stand.NewSettingsHandler(db)
+	standCategoryHandler := stand.NewCategoryHandler(db)
 	
 	// API v1 group
 	v1 := router.Group("/api/v1")
@@ -81,6 +82,12 @@ func SetupRoutes(router *gin.Engine, db *gorm.DB) {
 				orders.GET("/:id", standOrderHandler.GetOrder)
 				orders.POST("", standOrderHandler.CreateOrder)
 				orders.PUT("/:id/status", standOrderHandler.UpdateOrderStatus)
+			}
+			
+			// Category management
+			categories := standGroup.Group("/categories")
+			{
+				categories.GET("", standCategoryHandler.GetCategories)
 			}
 			
 			// Settings management
